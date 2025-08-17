@@ -105,10 +105,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # You will add your live frontend URL here after you deploy it
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    # e.g., "https://your-frontend-app.netlify.app"
-]
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 
 # Read the Gemini API key from the environment
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
