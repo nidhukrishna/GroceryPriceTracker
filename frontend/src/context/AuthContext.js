@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
             setLoading(false); // Set loading to false after checking
         };
         fetchUser();
-    }, []); // The empty array means this effect runs only once on mount
+    }, [authTokens, logoutUser]); // The empty array means this effect runs only once on mount
 
     let contextData = {
         user: user,
