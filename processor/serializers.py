@@ -6,7 +6,7 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         
-        fields = ['item_name', 'price']
+        fields = ['item_name', 'price','category']
 
 class ReceiptSerializer(serializers.ModelSerializer):
 

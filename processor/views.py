@@ -1,81 +1,107 @@
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
+from django.db.models import Sum
+from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .models import Receipt, Item
-from .ocr import extract_text, parse_receipt
-from rest_framework import generics
-from .serializers import ReceiptSerializer
+from django.db.models import Count
+from .ocr import extract_text, parse_receipt, categorize_items
+from .serializers import ReceiptSerializer, ItemSerializer
 
-# This decorator ensures the view only accepts POST requests.
+
 @api_view(['POST'])
-# This decorator ensures only logged-in users can access this endpoint.
 @permission_classes([IsAuthenticated])
-
 def process_receipt_view(request):
-    # Get the uploaded image file from the request.
-    print("Request received. Here are the files:", request.FILES)
     image_file = request.FILES.get('receipt_image')
     if not image_file:
         return JsonResponse({'error': 'No image provided.'}, status=400)
 
-    # 1. Save the file to a temporary location so we have a path for Tesseract.
+    # 1. Save and process the image file
     path = default_storage.save('tmp/' + image_file.name, ContentFile(image_file.read()))
     full_path = default_storage.path(path)
-
-    # 2. Call our OCR and Parsing functions.
+    
+    # Using the new function names
     raw_text = extract_text(full_path)
     parsed_items = parse_receipt(raw_text)
-
-    # 3. Delete the temporary file
+    
     default_storage.delete(path)
 
     if not parsed_items:
         return JsonResponse({'error': 'Could not parse items from the receipt.'}, status=400)
 
-    # 4. Save the results to our database.
-    try:
-        # Create the main Receipt record, linking it to the logged-in user.
-        receipt = Receipt.objects.create(user=request.user, image=image_file)
+    # --- NEW CATEGORIZATION LOGIC ---
+    item_names = [item['item'] for item in parsed_items]
+    
+    categories_list = [
+        "Groceries & Household", "Restaurants & Food Services", "Fuel & Transport",
+        "Pharmacy & Health", "Retail Shopping", "Bills & Utilities", "Entertainment & Leisure",
+        "Travel & Hospitality", "Education & Learning", "Banking & Financial",
+        "Services (Personal & Household)", "E-commerce / Online Purchases", "Donations & Memberships"
+    ]
+    
+    # Using the new function name
+    categorized_items_dict = categorize_items(item_names, categories_list)
+    
+    if categorized_items_dict:
+        for item in parsed_items:
+            item['category'] = categorized_items_dict.get(item['item'], 'Uncategorized')
+    else:
+        for item in parsed_items:
+            item['category'] = 'Uncategorized'
 
-        # Create a list of Item objects to be saved.
+    try:
+        receipt = Receipt.objects.create(user=request.user, image=image_file)
+        
         items_to_create = [
-            Item(receipt=receipt, item_name=item['item'], price=item['price'])
+            Item(receipt=receipt, item_name=item['item'], price=item['price'], category=item['category'])
             for item in parsed_items
         ]
-        # Save all items to the database in one efficient query.
         Item.objects.bulk_create(items_to_create)
-
-        # Return a success message.
+        
         return JsonResponse({'message': 'Receipt processed successfully!'}, status=201)
     except Exception as e:
-        # If anything goes wrong during the database save, return an error.
         return JsonResponse({'error': f'Failed to save data: {e}'}, status=500)
 
 
-# Display Receipts
 class ReceiptListView(generics.ListAPIView):
-    
-    # list of all receipts for the currently logged-in user.
-    
     serializer_class = ReceiptSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # filter receipts to show receipts belonging to user
-        return Receipt.objects.filter(user=self.request.user)
-    
+        return Receipt.objects.filter(user=self.request.user).order_by('-processed_date')
 
-#Display Details of a receipt
+
 class ReceiptDetailView(generics.RetrieveAPIView):
-    
-    # Provides the details of a single receipt
-    
     serializer_class = ReceiptSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-
         return Receipt.objects.filter(user=self.request.user)
 
+
+class CategorySummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        summary = Item.objects.filter(receipt__user=request.user)\
+                              .values('category')\
+                              .annotate(total_spent=Sum('price'))\
+                              .order_by('-total_spent')
+        return Response(summary)
+
+class TopItemsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        """
+        Calculates the top 5 most frequently purchased items for the logged-in user.
+        """
+        top_items = Item.objects.filter(receipt__user=request.user)\
+                                .values('item_name')\
+                                .annotate(item_count=Count('item_name'))\
+                                .order_by('-item_count')[:5] # Get the top 5
+        return Response(top_items)

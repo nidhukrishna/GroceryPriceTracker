@@ -16,4 +16,5 @@ class Item(models.Model):
     item_name = models.CharField(max_length=255)
     # A field for storing money values. It's more accurate than a standard float field.
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.CharField(max_length=100, default='Uncategorized')
 # Create your models here.
