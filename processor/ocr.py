@@ -2,11 +2,11 @@ import json
 import pytesseract
 from PIL import Image
 import google.generativeai as genai
+from django.conf import settings
 
 #Add your Gemini API Key here
 # For a real project, use environment variables for this.
-GEMINI_API_KEY = "AIzaSyDNEOC8W1eMAiJLQHCCQn1SKz0s7XEzFTI"
-genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 def extract_text(image_path):
     """Uses Tesseract to extract raw text from an image file."""
