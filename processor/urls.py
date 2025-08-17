@@ -2,7 +2,6 @@ from django.urls import path
 from .views import process_receipt_view
 from .views import ReceiptListView, ReceiptDetailView, CategorySummaryView, TopItemsView
 
-
 urlpatterns = [
     # This maps the URL .../process/ to our view function
     path('process/', process_receipt_view, name='process_receipt'),
