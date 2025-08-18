@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 export default AuthContext;
 
-const API_BASE_URL = 'https://grocerytracker.onrender.com';
+export const API_BASE_URL = 'https://grocerytracker.onrender.com';
 
 export const AuthProvider = ({ children }) => {
     let [authTokens, setAuthTokens] = useState(() =>
