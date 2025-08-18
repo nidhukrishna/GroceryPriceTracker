@@ -6,6 +6,8 @@ const AuthContext = createContext();
 
 export default AuthContext;
 
+const API_BASE_URL = 'https://grocerytracker.onrender.com';
+
 export const AuthProvider = ({ children }) => {
     let [authTokens, setAuthTokens] = useState(() =>
         localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null
@@ -14,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
-    const API_BASE_URL = 'https://grocerytracker.onrender.com';
+    
 
     let loginUser = async (e) => {
         e.preventDefault();

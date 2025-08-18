@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import AuthContext from '../context/AuthContext';
+import AuthContext, { API_BASE_URL } from '../context/AuthContext';
 
 const ReceiptUpload = () => {
   const [file, setFile] = useState(null);
@@ -30,7 +30,7 @@ const ReceiptUpload = () => {
     formData.append('receipt_image', file);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/receipt/process/', formData, {
+      const response = await axios.post('${API_BASE_URL}/api/receipt/process/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           // 2. We can now be sure authTokens exists here.

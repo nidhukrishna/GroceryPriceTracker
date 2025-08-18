@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import AuthContext from '../context/AuthContext';
+import AuthContext, { API_BASE_URL } from '../context/AuthContext';
 import CategoryPieChart from '../components/CategoryPieChart';
 // Import the existing CSS module from HomePage
 import styles from './HomePage.module.css'; 
@@ -11,7 +11,6 @@ const ReceiptDetailPage = () => {
     const [receipt, setReceipt] = useState(null);
     const [loading, setLoading] = useState(true);
     const { authTokens } = useContext(AuthContext);
-    const API_BASE_URL = 'http://127.0.0.1:8000';
 
     useEffect(() => {
         const fetchReceiptDetail = async () => {

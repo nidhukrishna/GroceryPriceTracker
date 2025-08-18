@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import AuthContext from '../context/AuthContext';
+import AuthContext, { API_BASE_URL } from '../context/AuthContext';
 
 const TopItems = () => {
     const [topItems, setTopItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const { authTokens } = useContext(AuthContext);
-    const API_BASE_URL = 'http://127.0.0.1:8000';
+
 
     useEffect(() => {
         const fetchTopItems = async () => {
