@@ -9,31 +9,25 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# Read the DEBUG value from environment variables. Defaults to 'False' if not set.
-# In your local .env file, you can set DEBUG=True
+# DEBUG mode
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Read ALLOWED_HOSTS from environment variables.
-# It should be a comma-separated string, e.g., "localhost,127.0.0.1,myapp.onrender.com"
+# Allowed hosts
 if DEBUG:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
-    ALLOWED_HOSTS = ['grocerytracker.onrender.com'] # Replace with your Render app name
-
+    ALLOWED_HOSTS = ['grocerytracker.onrender.com']  # Replace with your Render backend URL
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', # For Whitenoise
+    'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -51,7 +45,6 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # Add Whitenoise middleware right after SecurityMiddleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -81,8 +74,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'GroceryTracker.wsgi.application'
 
+# -------------------------------
 # Database
+# -------------------------------
 if DEBUG:
+    # Local dev → use SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -90,33 +86,38 @@ if DEBUG:
         }
     }
 else:
+    # Production (Render) → use Postgres
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600, ssl_require=False)
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True  # Require SSL when using external connections
+        )
     }
 
-# ... (Password validators remain the same) ...
-
+# -------------------------------
 # Internationalization
+# -------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# -------------------------------
+# Static & Media files
+# -------------------------------
 STATIC_URL = 'static/'
-# This is the directory where Django will collect all static files for production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# This is the storage engine for Whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (User-uploaded content)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# You will add your live frontend URL here after you deploy it
+# -------------------------------
+# CORS
+# -------------------------------
 if DEBUG:
     CORS_ALLOWED_ORIGINS = [
         'http://localhost:3000',
@@ -124,10 +125,12 @@ if DEBUG:
     ]
 else:
     CORS_ALLOWED_ORIGINS = [
-        'https://groctrack.netlify.app', # Replace with your Netlify app name
+        'https://groctrack.netlify.app',  # Replace with your Netlify frontend URL
     ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Read the Gemini API key from the environment
+# -------------------------------
+# API Keys
+# -------------------------------
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
