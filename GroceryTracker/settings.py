@@ -22,7 +22,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 if DEBUG:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
-    ALLOWED_HOSTS = ['https://grocerytracker.onrender.com'] # Replace with your Render app name
+    ALLOWED_HOSTS = ['grocerytracker.onrender.com'] # Replace with your Render app name
 
 
 # Application definition
@@ -91,7 +91,7 @@ if DEBUG:
     }
 else:
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=False)
     }
 
 # ... (Password validators remain the same) ...
@@ -124,7 +124,7 @@ if DEBUG:
     ]
 else:
     CORS_ALLOWED_ORIGINS = [
-        'https://groctrack.netlify.app/', # Replace with your Netlify app name
+        'https://groctrack.netlify.app', # Replace with your Netlify app name
     ]
 
 CORS_ALLOW_CREDENTIALS = True
