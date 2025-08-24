@@ -19,7 +19,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Read ALLOWED_HOSTS from environment variables.
 # It should be a comma-separated string, e.g., "localhost,127.0.0.1,myapp.onrender.com"
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -80,9 +80,11 @@ WSGI_APPLICATION = 'GroceryTracker.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
-
 # ... (Password validators remain the same) ...
 
 # Internationalization
@@ -106,7 +108,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # You will add your live frontend URL here after you deploy it
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # Read the Gemini API key from the environment
