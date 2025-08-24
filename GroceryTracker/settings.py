@@ -19,7 +19,10 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Read ALLOWED_HOSTS from environment variables.
 # It should be a comma-separated string, e.g., "localhost,127.0.0.1,myapp.onrender.com"
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+else:
+    ALLOWED_HOSTS = ['https://grocerytracker.onrender.com'] # Replace with your Render app name
 
 
 # Application definition
@@ -35,7 +38,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'processor',
-    'users', 
+    'users',
 ]
 
 REST_FRAMEWORK = {
@@ -79,12 +82,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'GroceryTracker.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    }
+
 # ... (Password validators remain the same) ...
 
 # Internationalization
@@ -108,10 +117,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # You will add your live frontend URL here after you deploy it
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'https://groctrack.netlify.app/', # Replace with your Netlify app name
+    ]
+
 CORS_ALLOW_CREDENTIALS = True
 
 # Read the Gemini API key from the environment
