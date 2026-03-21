@@ -16,6 +16,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Set a dummy SECRET_KEY and DATABASE_URL for the build phase
+ENV SECRET_KEY=build_dummy_key
+ENV DATABASE_URL=sqlite:///db.sqlite3
+
 RUN python manage.py collectstatic --noinput
 
 CMD ["gunicorn", "GroceryTracker.wsgi:application", "--bind", "0.0.0.0:10000"]
