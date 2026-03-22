@@ -18,8 +18,11 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 if DEBUG:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
-    ALLOWED_HOSTS = ['https://grocerypricetracker.onrender.com']  # Replace with your Render backend URL
+    ALLOWED_HOSTS = ['https://grocerypricetracker.onrender.com','.onrender.com']  # Replace with your Render backend URL
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://groctrack.netlify.app',
+]
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,10 +47,10 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
