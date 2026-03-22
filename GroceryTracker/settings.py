@@ -18,7 +18,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 if DEBUG:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
-    ALLOWED_HOSTS = ['grocerytracker.onrender.com']  # Replace with your Render backend URL
+    ALLOWED_HOSTS = ['https://grocerypricetracker.onrender.com']  # Replace with your Render backend URL
 
 # Application definition
 INSTALLED_APPS = [
