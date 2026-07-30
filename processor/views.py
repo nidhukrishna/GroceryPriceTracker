@@ -33,7 +33,7 @@ def process_receipt_view(request):
     if not parsed_items:
         return JsonResponse({'error': 'Could not parse items from the receipt.'}, status=400)
 
-    # --- NEW CATEGORIZATION LOGIC ---
+    # ---CATEGORIZATION LOGIC ---
     item_names = [item['item'] for item in parsed_items]
     
     categories_list = [

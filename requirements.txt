@@ -9,12 +9,12 @@ django-cors-headers==4.3.1
 # Server, Database, and Static Files
 gunicorn==22.0.0
 dj-database-url==2.1.0
-psycopg2==2.9.9
+psycopg2-binary>=2.9.9
 whitenoise[brotli]==6.7.0
 
 # Image and API Calls
-Pillow==10.3.0
-pytesseract==0.3.10
+Pillow>=10.3.0
+pytesseract>=0.3.10
 google-generativeai==0.5.4
 
 # Environment
