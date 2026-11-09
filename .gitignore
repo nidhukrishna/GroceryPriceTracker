@@ -1,0 +1,26 @@
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+db.sqlite3
+media/
+staticfiles/
+
+# Node / React
+node_modules/
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Secrets & Environment
+.env
+*.env
+google_api.txt
