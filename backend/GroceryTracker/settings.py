@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
 # Supports localhost, any Render subdomain (.onrender.com), plus custom ALLOWED_HOSTS env var
-default_hosts = 'localhost,127.0.0.1,.onrender.com,grocerytracker.onrender.com'
+default_hosts = 'localhost,127.0.0.1,.onrender.com,grocerypricetracker.onrender.com'
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get('ALLOWED_HOSTS', default_hosts).split(',')
