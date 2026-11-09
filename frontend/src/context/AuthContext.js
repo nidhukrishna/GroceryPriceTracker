@@ -9,7 +9,7 @@ export default AuthContext;
 export const API_BASE_URL =
     process.env.REACT_APP_API_URL ||
     (process.env.NODE_ENV === 'production'
-        ? 'https://grocerytracker.onrender.com'
+        ? 'https://grocerypricetracker.onrender.com'
         : 'http://127.0.0.1:8000');
 
 export const AuthProvider = ({ children }) => {
